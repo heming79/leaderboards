@@ -3,15 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Provider Leaderboards</title>
+    <title>AI Model & Provider Leaderboards</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>AI Provider Leaderboards</h1>
-            <p class="subtitle">Compare AI model providers by performance, price, and speed</p>
+            <h1>AI Model & Provider Leaderboards</h1>
+            <p class="subtitle">Compare AI models and providers by performance, price, context window, and more</p>
         </header>
+
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="models">Models</button>
+            <button class="tab-btn" data-tab="providers">Providers</button>
+        </div>
+
+        <div class="filters-section">
+            <div class="filter-group">
+                <label for="searchInput">Search:</label>
+                <input type="text" id="searchInput" placeholder="Search models or providers...">
+            </div>
+            
+            <div class="filter-group" id="providerFilterGroup">
+                <label for="providerFilter">Provider:</label>
+                <select id="providerFilter">
+                    <option value="">All Providers</option>
+                </select>
+            </div>
+            
+            <div class="filter-group" id="licenseFilterGroup">
+                <label for="licenseFilter">License:</label>
+                <select id="licenseFilter">
+                    <option value="">All Licenses</option>
+                </select>
+            </div>
+            
+            <div class="filter-group" id="openSourceFilterGroup">
+                <label for="openSourceFilter">Open Source:</label>
+                <select id="openSourceFilter">
+                    <option value="">All</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                </select>
+            </div>
+            
+            <div class="filter-group" id="contextWindowGroup">
+                <label for="minContextWindow">Min Context:</label>
+                <select id="minContextWindow">
+                    <option value="">Any</option>
+                    <option value="32000">32K+</option>
+                    <option value="64000">64K+</option>
+                    <option value="128000">128K+</option>
+                    <option value="200000">200K+</option>
+                    <option value="1000000">1M+</option>
+                </select>
+            </div>
+            
+            <button id="applyFiltersBtn" class="btn btn-primary">Apply Filters</button>
+            <button id="clearFiltersBtn" class="btn btn-secondary">Clear</button>
+        </div>
 
         <div class="controls">
             <div class="sort-controls">
@@ -20,10 +70,12 @@
                     <option value="intelligence_index">Intelligence Index</option>
                     <option value="coding_index">Coding Index</option>
                     <option value="agentic_index">Agentic Index</option>
+                    <option value="context_window">Context Window</option>
                     <option value="price_per_1k_input">Price (Input)</option>
                     <option value="price_per_1k_output">Price (Output)</option>
                     <option value="latency_ms">Latency</option>
                     <option value="throughput_tokens_per_sec">Throughput</option>
+                    <option value="name">Name</option>
                 </select>
                 <select id="sortOrder">
                     <option value="desc">Descending</option>
@@ -33,11 +85,41 @@
             <button id="refreshBtn" class="btn">Refresh Data</button>
         </div>
 
-        <div class="table-container">
-            <table id="leaderboardTable">
+        <div class="table-container" id="modelsTableContainer">
+            <table id="modelsTable">
                 <thead>
                     <tr>
                         <th>Rank</th>
+                        <th>Logo</th>
+                        <th>Model</th>
+                        <th>Provider</th>
+                        <th>Intelligence Index</th>
+                        <th>Coding Index</th>
+                        <th>Agentic Index</th>
+                        <th>Context Window</th>
+                        <th>License</th>
+                        <th>Open Source</th>
+                        <th>Model Size</th>
+                        <th>Price/1K Input</th>
+                        <th>Price/1K Output</th>
+                        <th>Latency (ms)</th>
+                        <th>Throughput (tokens/s)</th>
+                    </tr>
+                </thead>
+                <tbody id="modelsTableBody">
+                    <tr>
+                        <td colspan="16" class="loading">Loading data...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="table-container" id="providersTableContainer" style="display: none;">
+            <table id="providersTable">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Logo</th>
                         <th>Provider</th>
                         <th>Intelligence Index</th>
                         <th>Coding Index</th>
@@ -46,12 +128,12 @@
                         <th>Price/1K Output</th>
                         <th>Latency (ms)</th>
                         <th>Throughput (tokens/s)</th>
-                        <th>Models</th>
+                        <th>Models Count</th>
                     </tr>
                 </thead>
-                <tbody id="providerTableBody">
+                <tbody id="providersTableBody">
                     <tr>
-                        <td colspan="10" class="loading">Loading data...</td>
+                        <td colspan="11" class="loading">Loading data...</td>
                     </tr>
                 </tbody>
             </table>
